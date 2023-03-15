@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:bankgenie/utils/preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,6 +20,7 @@ class LoginBlocBloc extends Bloc<LoginBlocEvent, LoginBlocState> {
       try {
         LoginModel loginBlocList =
             await _loginBlocRepository.login(event.username, event.password);
+        Preferences.setLoggedInStatus();
         emit(LoginBlocLoadedState(loginBlocList));
         debugPrint("{loginBlocList $loginBlocList}");
       } catch (e) {

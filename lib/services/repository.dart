@@ -15,6 +15,6 @@ class Repository {
   }
 
   Future getOffice() async {
-    return await restClient.getoffice();
+    return await restClient.getOffices();
   }
 }

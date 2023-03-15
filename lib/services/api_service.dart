@@ -1,28 +1,28 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bankgenie/utils/endpoints.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
-import '../models/Office_model/offices.dart';
 import '../models/login_model/login_model.dart';
+import '../models/office_model/office.dart';
+import '../utils/constants.dart';
 
 class RestClient {
   final Dio dio = Dio(
-    BaseOptions(
-      baseUrl: 'http://banqindev.eastus.cloudapp.azure.com:8080',
-    ),
+    BaseOptions(baseUrl: EndPoints.BASE_URL, headers: {
+      HttpHeaders.contentTypeHeader: "application/json",
+      "Banqin-Platform-TenantId": "default"
+    }),
   );
+
   Future<LoginModel> login(userName, password) async {
     LoginModel? user;
     var params = {"username": userName, "password": password};
     try {
       Response userData = await dio.post(
-        '/banqin-provider/api/v1/authentication',
-        options: Options(headers: {
-          HttpHeaders.contentTypeHeader: "application/json",
-          "Banqin-Platform-TenantId": "default"
-        }),
+        EndPoints.GET_AUTH,
         data: jsonEncode(params),
       );
       user = LoginModel.fromJson(userData.data);
@@ -32,24 +32,23 @@ class RestClient {
     return user!;
   }
 
-  Future<List<dynamic>> getoffice() async {
-    List<dynamic>? offices;
+  Future<List<Office>?> getOffices() async {
+    List<Office>? offices;
     try {
       Response officeData = await dio.get(
-        '/banqin-provider/api/v1/offices',
+        EndPoints.GET_OFFICES,
         options: Options(headers: {
-          HttpHeaders.contentTypeHeader: "application/json",
-          "Banqin-Platform-TenantId": "default",
-          HttpHeaders.authorizationHeader: "Basic YWRtaW46cGFzc3dvcmQ="
+          HttpHeaders.authorizationHeader: "Basic ${Constants.AUTH_KEEY}"
         }),
       );
-      debugPrint('Offices List: $officeData');
       offices =
-          officeData.data.map((office) => Offices.fromJson(office)).toList();
+          List<Office>.from(officeData.data.map((x) => Office.fromJson(x)));
     } on DioError catch (e) {
       parseDioError(e);
+    } catch (e) {
+      _onError(e);
     }
-    return offices!;
+    return offices;
   }
 
   void parseDioError(DioError e) {
@@ -63,5 +62,9 @@ class RestClient {
       debugPrint('Error sending request!');
       debugPrint(e.message);
     }
+  }
+
+  void _onError(Object e) {
+    debugPrint(e.toString());
   }
 }

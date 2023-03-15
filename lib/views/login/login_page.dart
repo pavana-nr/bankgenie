@@ -5,17 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'form_page.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  @override
-  void initState() {
-    super.initState();
+  static Page page() {
+    return const MaterialPage<void>(
+      child: LoginPage(),
+    );
   }
 
   @override
@@ -25,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
         builder: (context, state) {
           if (state is LoginBlocLoadedState) {
             Future.delayed(Duration.zero, () {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const OfficePage()),
               );

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../controllers/login_bloc/login_bloc_bloc.dart';
 import '../../controllers/login_bloc/login_bloc_events.dart';
+import '../../widgets/button.dart';
 import 'custom_form_field.dart';
 
 class FormPage extends StatefulWidget {
@@ -14,8 +15,16 @@ class FormPage extends StatefulWidget {
 
 class _FormPageState extends State<FormPage> {
   final _formKey = GlobalKey<FormState>();
-  final usernameController = TextEditingController(text: "admin");
-  final passwordController = TextEditingController(text: "password");
+  late final TextEditingController usernameController;
+  late final TextEditingController passwordController;
+
+  @override
+  void initState() {
+    super.initState();
+    usernameController = TextEditingController(text: "admin");
+    passwordController = TextEditingController(text: "password");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,15 +53,16 @@ class _FormPageState extends State<FormPage> {
                               controller: usernameController,
                               hintText: 'Username',
                               validator: (val) {
-                                // if (val!.isEmpty) return 'Enter username';
+                                if (val!.isEmpty) return 'Enter username';
                                 return null;
                               },
                             ),
                             CustomFormField(
                               controller: passwordController,
                               hintText: 'Password',
+                              isPassword: true,
                               validator: (val) {
-                                // if (val!.isEmpty) return 'Enter  password';
+                                if (val!.isEmpty) return 'Enter  password';
                                 return null;
                               },
                             ),
@@ -63,25 +73,8 @@ class _FormPageState extends State<FormPage> {
                     const SizedBox(
                       height: 10.0,
                     ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          minimumSize: const Size.fromHeight(40),
-                          backgroundColor: Colors.blue),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          debugPrint(usernameController.text +
-                              passwordController.text);
-                          BlocProvider.of<LoginBlocBloc>(context).add(
-                              LoginBlocEvent(
-                                  username: usernameController.text,
-                                  password: passwordController.text));
-                        }
-                      },
-                      child: const Text(
-                        'Login',
-                        style: TextStyle(fontSize: 16.0, color: Colors.white),
-                      ),
-                    ),
+                    PrimaryButton(
+                        onPressed: () => _onLoginPressed(), title: "Login")
                   ],
                 ),
               ),
@@ -90,5 +83,21 @@ class _FormPageState extends State<FormPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    usernameController.dispose();
+    passwordController.dispose();
+  }
+
+  void _onLoginPressed() {
+    if (_formKey.currentState!.validate()) {
+      debugPrint(usernameController.text + passwordController.text);
+      BlocProvider.of<LoginBlocBloc>(context).add(LoginBlocEvent(
+          username: usernameController.text,
+          password: passwordController.text));
+    }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:bankgenie/models/office_model/office.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../services/repository.dart';
@@ -15,7 +16,7 @@ class OfficeBlocBloc extends Bloc<OfficeBlocEvent, OfficeBlocState> {
     on<OfficeBlocEvent>((event, emit) async {
       emit(OfficeBlocLoading());
       try {
-        List<dynamic> officeBlocList = await _repository.getOffice();
+        List<Office> officeBlocList = await _repository.getOffice();
         emit(OfficeBlocLoadedState(officeBlocList));
         debugPrint("{OfficeBlocList $officeBlocList}");
       } catch (e) {

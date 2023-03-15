@@ -1,5 +1,3 @@
-import 'package:dio/dio.dart';
-
 import '../../models/login_model/login_model.dart';
 
 class LoginBlocState {}

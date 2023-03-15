@@ -7,9 +7,11 @@ class CustomFormField extends StatelessWidget {
     required this.hintText,
     this.inputFormatters,
     this.validator,
+    this.isPassword,
     this.controller,
   }) : super(key: key);
   final String hintText;
+  final bool? isPassword;
   final List<TextInputFormatter>? inputFormatters;
   final String? Function(String?)? validator;
   // ignore: prefer_typing_uninitialized_variables
@@ -21,6 +23,7 @@ class CustomFormField extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         inputFormatters: inputFormatters,
+        obscureText: isPassword ?? false,
         validator: validator,
         decoration: InputDecoration(hintText: hintText),
       ),
